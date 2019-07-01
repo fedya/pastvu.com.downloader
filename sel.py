@@ -7,11 +7,10 @@ from selenium import webdriver
 driver = webdriver.Chrome('/usr/bin/chromedriver')
 
 driver.get('https://pastvu.com/p/126038')
-el = WebDriverWait(driver, 15).until(
-	#EC.presence_of_element_located((By.ID, "auth"))
-	EC.presence_of_element_located((By.CLASS, "photoPreview showPrv"))
-)
+el = WebDriverWait(driver, 15).until(EC.presence_of_element_located((By.CLASS_NAME, "imgRow")))
+#el = WebDriverWait(driver, 15).until(EC.presence_of_element_located((By.ID, "auth")))
 print(el)
+print(el.get_attribute('outerHTML'))
 
 
 
