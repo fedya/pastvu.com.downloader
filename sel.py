@@ -8,7 +8,8 @@ driver = webdriver.Chrome('/usr/bin/chromedriver')
 
 driver.get('https://pastvu.com/p/126038')
 el = WebDriverWait(driver, 15).until(
-	EC.presence_of_element_located((By.ID, "auth"))
+	#EC.presence_of_element_located((By.ID, "auth"))
+	EC.presence_of_element_located((By.CLASS, "photoPreview showPrv"))
 )
 print(el)
 
