@@ -25,8 +25,9 @@ def download_url(pastvu_url):
         print(pastvu_image["content"]
               if pastvu_description else "No image found")
         download_file = requests.get(pastvu_image["content"], stream=True)
-        resulting_jpeg = pastvu_title["content"] + '.jpg'
-        resulting_readme = pastvu_title["content"] + '.txt'
+        data_dir = './data/'
+        resulting_jpeg = data_dir + pastvu_title["content"] + '.jpg'
+        resulting_readme = data_dir + pastvu_title["content"] + '.txt'
         with open(resulting_jpeg, 'wb') as f:
             for chunk in download_file.iter_content(chunk_size=1048576):
                 if chunk:
@@ -38,6 +39,9 @@ def download_url(pastvu_url):
                     pastvu_title["content"] if pastvu_title else "No title found")
             f.write('description: %s' %
                     pastvu_description["content"] if pastvu_description else "No description found")
+        for link in soup.find_all('link', {'rel':'next'}):
+            next_url = soup.select("[rel='next']")[0]['href']
+            download_url(next_url)
 
 
 if __name__ == '__main__':
