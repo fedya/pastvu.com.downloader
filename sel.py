@@ -1,36 +1,48 @@
 #!/usr/bin/env python
+import re
+import random
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 import time
 from selenium import webdriver
-driver = webdriver.Chrome('/usr/bin/chromedriver')
+from bs4 import BeautifulSoup
 
-driver.get('https://pastvu.com/p/126038')
-el = WebDriverWait(driver, 15).until(EC.presence_of_element_located((By.CLASS_NAME, "imgRow")))
-#el = WebDriverWait(driver, 15).until(EC.presence_of_element_located((By.ID, "auth")))
-print(el)
-print(el.get_attribute('outerHTML'))
+import os
+
+pastvu_urls = []
+
+def print_conf(message):
+    try:
+        logFile = open('pastvu.log', 'a')
+        logFile.write(message + '\n')
+        logFile.close()
+    except:
+        print("Can't write to log file: " + conf)
+    print(message)
+
+def get_urls(url):
+    driver = webdriver.Chrome('/usr/bin/chromedriver')
+    temp_list = []
+    driver.get(url)
+    el = WebDriverWait(driver, 15).until(EC.presence_of_element_located((By.CLASS_NAME, "page-wrap")))
+    page = el.get_attribute('outerHTML')
+    soup = BeautifulSoup(page, 'html.parser')
+    matcher = re.compile('/p/\d+')
+    for a in soup.find_all('a', href=True):
+        url = temp_list.append(a['href'])
+    target_urls = list(filter(matcher.match, temp_list))
+    print(target_urls)
+    driver.quit()
+    for target in target_urls:
+        pastvu_urls.append('https://pastvu.com' + target)
+#        print('https://pastvu.com' + target)
+        print_conf('https://pastvu.com' + target)
 
 
+get_urls('https://pastvu.com/p/126038')
 
-#url="https://pastvu.com/p/126038"
-#driver.get(url)
-#continue_link = driver.find_element_by_partial_link_text('505135')
-#continue_link = driver.find_element_by_id('top')
-#content = driver.find_element_by_class_name('mContainer mHidden mShow')
-
-#driver.find_element(:css, 'mContainer mHidden mShow')
-
-#elem = driver.find_element_by_name("q")
-#viddiv = driver.find_element_by_id('imgRow')
-#source = viddiv.find_element_by_tag_name('photoPreview showPrv')
-#source.get_attribute('src')
-
-#driver.get('http://www.google.com/xhtml');
-#time.sleep(5) # Let the user actually see something!
-#search_box = driver.find_element_by_name('q')
-#search_box.send_keys('ChromeDriver')
-#search_box.submit()
-#time.sleep(5) # Let the user actually see something!
-#driver.quit()
+for another_target in pastvu_urls:
+    rand_item = pastvu_urls[random.randrange(len(pastvu_urls))]
+    print(rand_item)
+    get_urls(rand_item)
